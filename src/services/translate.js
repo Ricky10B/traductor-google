@@ -1,10 +1,3 @@
-const URL_TRANSLATE = 'https://text-translator2.p.rapidapi.com/translate'
-const TRANSLATE_API_KEY = '08ef54e6b7mshddccb9c5554a2b6p16978fjsnec8ec41bdf7c'
-const TRANSLATE_HOST = 'text-translator2.p.rapidapi.com'
-
-const URL_DETECT_LANGUAGE = 'https://api.cohere.ai/v1/detect-language'
-const DETECT_LANGUAGE_API_KEY = 'OgiuAEB9beITypoDvtMJkqVF0RvJx76yYTJGsuBB'
-
 export async function translate (sourceLanguage, targetLanguage, text) {
   if (sourceLanguage === targetLanguage) {
     return {
@@ -15,7 +8,7 @@ export async function translate (sourceLanguage, targetLanguage, text) {
     }
   }
 
-  const url = URL_TRANSLATE
+  const url = process.env.URL_TRANSLATE
 
   const encodedParams = new URLSearchParams()
   encodedParams.append('source_language', sourceLanguage)
@@ -26,8 +19,8 @@ export async function translate (sourceLanguage, targetLanguage, text) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-RapidAPI-Key': TRANSLATE_API_KEY,
-      'X-RapidAPI-Host': TRANSLATE_HOST
+      'X-RapidAPI-Key': process.env.TRANSLATE_API_KEY,
+      'X-RapidAPI-Host': process.env.TRANSLATE_HOST
     },
     body: encodedParams
   }
@@ -36,13 +29,13 @@ export async function translate (sourceLanguage, targetLanguage, text) {
 }
 
 export async function detectLanguage (text) {
-  const url = URL_DETECT_LANGUAGE
+  const url = process.env.URL_DETECT_LANGUAGE
   const options = {
     method: 'POST',
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',
-      authorization: 'Bearer ' + DETECT_LANGUAGE_API_KEY
+      authorization: 'Bearer ' + process.env.DETECT_LANGUAGE_API_KEY
     },
     body: JSON.stringify({ texts: [text] })
   }
