@@ -1,4 +1,4 @@
-import { IconShowLanguages } from './Icons'
+import { IconShowLanguages } from './Icons.jsx'
 
 export const SelectLanguage = ({
   handleCloseSearchLanguage,

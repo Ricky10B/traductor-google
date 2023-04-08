@@ -1,12 +1,12 @@
-import { IconoDobleFlecha } from './components/Icons'
+import { IconoDobleFlecha } from './components/Icons.jsx'
 import './App.css'
 import { useEffect } from 'react'
-import { Textarea } from './components/Textarea'
-import { SelectLanguage } from './components/selectLanguage'
-import { ModalAllLanguages } from './components/modalAllLanguages'
-import { useDebounce } from './hooks/useDebounce'
-import { detectLanguage, translate } from './services/translate'
-import { useStore } from './hooks/useStore'
+import { Textarea } from './components/Textarea.jsx'
+import { SelectLanguage } from './components/selectLanguage.jsx'
+import { ModalAllLanguages } from './components/modalAllLanguages.jsx'
+import { useDebounce } from './hooks/useDebounce.jsx'
+import { detectLanguage, translate } from './services/translate.js'
+import { useStore } from './hooks/useStore.js'
 
 function App () {
   const {

@@ -1,6 +1,6 @@
-import { IconoEquis } from './Icons'
+import { IconoEquis } from './Icons.jsx'
 import { languages } from '../mocks/languages.json'
-import { useStore } from '../hooks/useStore'
+import { useStore } from '../hooks/useStore.js'
 
 export const ModalAllLanguages = ({
   handleCloseSearchLanguage,

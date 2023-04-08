@@ -4,7 +4,7 @@ import {
   IconSound,
   IconSpeakTranslate,
   IconoEquis
-} from './Icons'
+} from './Icons.jsx'
 
 export const Textarea = ({
   placeholder,
