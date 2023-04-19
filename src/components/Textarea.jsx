@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import {
   IconCopyClipboard,
   IconSound,
@@ -8,7 +7,6 @@ import {
 
 export const Textarea = ({
   placeholder,
-  disabled,
   type,
   handleText,
   text,
@@ -18,9 +16,10 @@ export const Textarea = ({
   loading
 }) => {
   const listenText = () => {
-    const voices = speechSynthesis.getVoices()
     const speech = new window.SpeechSynthesisUtterance(text)
-    speech.voice = voices[8]
+    const speechSynthesis = window.speechSynthesis
+    const voice = speechSynthesis.getVoices()[8]
+    speech.voice = voice
     speechSynthesis.speak(speech)
   }
 
@@ -35,7 +34,7 @@ export const Textarea = ({
         className={`resize-none text-2xl py-2 px-4 w-full ${type === 'from' && 'bg-transparent w-[93%] pr-12'} outline-none h-4/5`}
         rows='7'
         maxLength={5000}
-        disabled={disabled}
+        disabled={type === 'to' && 'disabled'}
         value={text}
         onChange={handleText}
       />

@@ -1,3 +1,11 @@
+import {
+  VITE_URL_TRANSLATE,
+  VITE_DETECT_LANGUAGE_API_KEY,
+  VITE_TRANSLATE_API_KEY,
+  VITE_TRANSLATE_HOST,
+  VITE_URL_DETECT_LANGUAGE
+} from '../constants.js'
+
 export async function translate (sourceLanguage, targetLanguage, text) {
   if (sourceLanguage === targetLanguage) {
     return {
@@ -8,7 +16,7 @@ export async function translate (sourceLanguage, targetLanguage, text) {
     }
   }
 
-  const url = process.env.URL_TRANSLATE
+  const url = VITE_URL_TRANSLATE
 
   const encodedParams = new URLSearchParams()
   encodedParams.append('source_language', sourceLanguage)
@@ -19,8 +27,8 @@ export async function translate (sourceLanguage, targetLanguage, text) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-RapidAPI-Key': process.env.TRANSLATE_API_KEY,
-      'X-RapidAPI-Host': process.env.TRANSLATE_HOST
+      'X-RapidAPI-Key': VITE_TRANSLATE_API_KEY,
+      'X-RapidAPI-Host': VITE_TRANSLATE_HOST
     },
     body: encodedParams
   }
@@ -29,13 +37,13 @@ export async function translate (sourceLanguage, targetLanguage, text) {
 }
 
 export async function detectLanguage (text) {
-  const url = process.env.URL_DETECT_LANGUAGE
+  const url = VITE_URL_DETECT_LANGUAGE
   const options = {
     method: 'POST',
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',
-      authorization: 'Bearer ' + process.env.DETECT_LANGUAGE_API_KEY
+      authorization: 'Bearer ' + VITE_DETECT_LANGUAGE_API_KEY
     },
     body: JSON.stringify({ texts: [text] })
   }

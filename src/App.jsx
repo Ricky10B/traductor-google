@@ -1,12 +1,12 @@
 import { IconoDobleFlecha } from './components/Icons.jsx'
-import './App.css'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Textarea } from './components/Textarea.jsx'
 import { SelectLanguage } from './components/SelectLanguage.jsx'
 import { ModalAllLanguages } from './components/ModalAllLanguages.jsx'
 import { useDebounce } from './hooks/useDebounce.jsx'
 import { detectLanguage, translate } from './services/translate.js'
 import { useStore } from './hooks/useStore.js'
+import './App.css'
 
 function App () {
   const {
@@ -33,12 +33,13 @@ function App () {
     resultTranslate
   } = useStore()
   const debounceValue = useDebounce(text)
+  const recognition = useRef(null)
 
   useEffect(() => {
     if (debounceValue.trim() === '' || text.trim() === '') return
 
     const languageDetected = async () => {
-      const value = await detectLanguage(debounceValue)
+      const value = await detectLanguage(debounceValue).catch(err => console.error(err))
       const result = value.results[0]
       const payload = {
         from: result.language_name,
@@ -49,15 +50,20 @@ function App () {
     }
 
     const translateText = async () => {
-      const translatedText = await translate(fromCode, toCode, debounceValue)
+      try {
+        const translatedText = await translate(fromCode, toCode, debounceValue)
 
-      if (translatedText.status !== 'success') {
+        if (translatedText.status !== 'success') {
+          resultTranslate({ result: 'Error' })
+          return
+        }
+
+        if (translatedText.data.translatedText !== '') {
+          resultTranslate({ result: translatedText.data.translatedText })
+        }
+      } catch (err) {
+        console.error(err)
         resultTranslate({ result: 'Error' })
-        return
-      }
-
-      if (translatedText.data.translatedText !== '') {
-        resultTranslate({ result: translatedText.data.translatedText })
       }
     }
 
@@ -80,25 +86,38 @@ function App () {
   }
 
   // Estilar el micrófono cuando se inicie la captura de audio
+  // e iniciar la captura de audio del usuario
   const speech = () => {
-    // eslint-disable-next-line new-cap, no-undef
-    const recognition = new webkitSpeechRecognition()
-    recognition.lang = 'es-CO'
-
-    recognition.onsoundend = (e) => {
-      recognition.stop()
+    if (recognition.current == null) {
+      // eslint-disable-next-line new-cap, no-undef
+      recognition.current = new window.webkitSpeechRecognition()
     }
 
-    recognition.onerror = (e) => {
+    const recog = recognition.current
+    recog.lang = 'es-CO'
+    if (speaking) {
+      recog.stop()
+      recognition.current = null
+      setSpeaking({ speaking: false })
+      return
+    }
+
+    recog.onsoundend = (e) => {
+      recog.stop()
+    }
+
+    recog.onerror = (e) => {
+      recognition.current = null
       setSpeaking({ speaking: false })
     }
 
-    recognition.onresult = (e) => {
+    recog.onresult = (e) => {
       const textSpeech = e.results[0][0].transcript
+      recognition.current = null
       setFromText({ text: textSpeech })
     }
 
-    recognition.start()
+    recog.start()
     setSpeaking({ speaking: true })
   }
 
@@ -166,7 +185,6 @@ function App () {
         <section className='grid grid-cols-1 gap-2 sm:grid-cols-[1fr_3em_1fr] sm:gap-0'>
           <Textarea
             placeholder='Ingresar texto'
-            disabled={false}
             type='from'
             handleText={handleText}
             text={text}
@@ -177,12 +195,8 @@ function App () {
           <div />
           <Textarea
             placeholder='Traducción'
-            disabled
             type='to'
-            handleText={handleText}
             text={result}
-            deleteText={deleteText}
-            speech={speech}
             speaking={speaking}
             loading={loading}
           />
